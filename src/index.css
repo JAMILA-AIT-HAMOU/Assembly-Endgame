@@ -4,10 +4,100 @@
 
 body {
   margin: 0;
-  font-family: sans-serif;
-  background-color: #f5f5f5;
+  font-family: "Hanken Grotesk", Arial, sans-serif;
+  background-color: #262626;
+  color: #d9d9d9;
+  padding: 20px;
+  height: 100vh;
   display: flex;
   justify-content: center;
+}
+header {
+  text-align: center;
+}
+header > h1 {
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: #F9F4DA;
+}
+header> p{
+  font-size: 0.87rem;
+  max-width: 350px;
+
+  color: #8E8E8E;
+}
+section.game-status{
+  background-color: #10A95B;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  height: 100vh;
+  color: #F9F4DA;
+  border-radius: 4px;
+  margin-block: 30px;
+  text-align: center;
+}
+section.game-status>h2{
+  font-size: 1.25rem;
+  margin: 5px;
+
+}
+.game-status>p{
+  margin: 5px;
+
+}
+section.language-chips{
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px;
+  justify-content: center;
+  max-width: 350px;
+  margin-bottom: 36px;
+}
+span.chip{
+  padding: 4.5px;
+  border-radius: 4px;
+
+}
+section.word{
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.word>span{
+  background-color: #323232;
+  height: 40px;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  font-size: 1.125rem;
+  align-items: center;
+  border-bottom: solid 1px #F9F4DA;
+}
+section.keyboard{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 350px;
+  margin-bottom: 36px;
+}
+.keyboard> button{
+  height: 35px;
+  width: 35px;
+  background-color:#FCBA29;
+  border: 1px solid #D7D7D7;
+  border-radius: 3px;
+  cursor: pointer;
+}
+button.new-game{
+  background-color: #11B5E5;
+  border: 1px solid #D7D7D7;
+  border-radius: 4px;
+  width: 225px;
+  height: 40px;
+  padding: 6px 12px ;
+display: block;
+margin-inline:auto;
+cursor: pointer;
 }
