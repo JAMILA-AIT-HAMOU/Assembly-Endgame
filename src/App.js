@@ -31,7 +31,7 @@ export default function AsssemblyEndGame() {
 
   const letterElements = [...currentWord].map((letter, index) => {
     const capitalLetter = letter.toUpperCase();
-    return <span key={index}>{capitalLetter}</span>;
+    return <span key={index}>{guessedLetters.includes(letter) ? capitalLetter: ""}</span>;
   });
 
   const keyboardElements = [...alphabet].map((letterKey) => {
