@@ -82,13 +82,19 @@ section.keyboard{
   max-width: 350px;
   margin-bottom: 36px;
 }
-.keyboard> button{
+section.keyboard> button{
   height: 35px;
   width: 35px;
   background-color:#FCBA29;
   border: 1px solid #D7D7D7;
   border-radius: 3px;
   cursor: pointer;
+}
+section.keyboard> button.correct{
+  background-color: #10A95B;
+}
+section.keyboard> button.wrong{
+  background-color:#EC5D49;
 }
 button.new-game{
   background-color: #11B5E5;

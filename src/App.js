@@ -1,6 +1,7 @@
 import Header from "./Header";
 import { languages } from "./Languages.js";
 import { useState } from "react";
+import {clsx} from "clsx"
 
 export default function AsssemblyEndGame() {
   // the states
@@ -34,10 +35,20 @@ export default function AsssemblyEndGame() {
   });
 
   const keyboardElements = [...alphabet].map((letterKey) => {
-    const letter = letterKey.toUpperCase();
+
+    
+    const isGuessed=guessedLetters.includes(letterKey)
+    const isCorrect=isGuessed && currentWord.includes(letterKey)
+    const isWrong=isGuessed && !currentWord.includes(letterKey)
+    const className=clsx({
+      correct: isCorrect,
+      wrong: isWrong,
+    })
+    console.log(className)
+    
     return (
-      <button key={letter} onClick={() => addGuessedLetter(letter)}>
-        {letter}
+      <button className={className} key={letterKey} onClick={() => addGuessedLetter(letterKey)}>
+        {letterKey.toUpperCase()}
       </button>
     );
   });
