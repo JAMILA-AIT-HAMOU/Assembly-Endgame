@@ -3,10 +3,19 @@ import { languages } from "./Languages.js";
 import { useState } from "react";
 
 export default function AsssemblyEndGame() {
+  // the states
   const [currentWord, setCurrentWord] = useState("react");
+  const [guessedLetters, setGuessedLetters] = useState([]);
+  console.log(guessedLetters);
 
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
-  
+
+  function addGuessedLetter(letter) {
+    setGuessedLetters((prevLetter) =>
+      prevLetter.includes(letter) ? prevLetter : [...prevLetter, letter]
+    );
+  }
+
   const languagesElements = languages.map((language) => {
     const styles = {
       backgroundColor: language.backgroundColor,
@@ -24,10 +33,14 @@ export default function AsssemblyEndGame() {
     return <span key={index}>{capitalLetter}</span>;
   });
 
-  const keyboardElements = [...alphabet].map((letterKey) =>  {
-    return <button key={letterKey}>{letterKey.toUpperCase()}</button>;
+  const keyboardElements = [...alphabet].map((letterKey) => {
+    const letter = letterKey.toUpperCase();
+    return (
+      <button key={letter} onClick={() => addGuessedLetter(letter)}>
+        {letter}
+      </button>
+    );
   });
-
 
   return (
     <main>
@@ -45,7 +58,7 @@ export default function AsssemblyEndGame() {
       <section className="language-chips">{languagesElements}</section>
       <section className="word">{letterElements}</section>
       <section className="keyboard">{keyboardElements}</section>
-      <button className="new-game" >New Game</button>
+      <button className="new-game">New Game</button>
     </main>
   );
 }
