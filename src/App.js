@@ -10,6 +10,10 @@ export default function AsssemblyEndGame() {
 
   // Derived values
   const wronGuessCount=guessedLetters.filter(letter=>!currentWord.includes(letter)).length
+  const isGameWon=currentWord.split("").every(letter=>guessedLetters.includes(letter))
+  const isGameLost=wronGuessCount>=languages.length-1
+  const isGameOver=isGameWon || isGameLost
+
   // static values
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -73,7 +77,8 @@ export default function AsssemblyEndGame() {
       <section className="language-chips">{languagesElements}</section>
       <section className="word">{letterElements}</section>
       <section className="keyboard">{keyboardElements}</section>
-      <button className="new-game">New Game</button>
+      {isGameOver && 
+      <button className="new-game">New Game</button>}
     </main>
   );
 }
