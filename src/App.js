@@ -4,11 +4,13 @@ import { useState } from "react";
 import {clsx} from "clsx"
 
 export default function AsssemblyEndGame() {
-  // the states
+  // state values
   const [currentWord, setCurrentWord] = useState("react");
   const [guessedLetters, setGuessedLetters] = useState([]);
-  console.log(guessedLetters);
 
+  // Derived values
+  const wronGuessCount=guessedLetters.filter(letter=>!currentWord.includes(letter)).length
+  // static values
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
   function addGuessedLetter(letter) {
@@ -17,13 +19,16 @@ export default function AsssemblyEndGame() {
     );
   }
 
-  const languagesElements = languages.map((language) => {
+  const languagesElements = languages.map((language, index) => {
+
+    const islanguageLost=index < wronGuessCount
     const styles = {
       backgroundColor: language.backgroundColor,
       color: language.color,
     };
+    const className=clsx("chip", islanguageLost && "lost")
     return (
-      <span className="chip" style={styles} key={language.name}>
+      <span className={className} style={styles} key={language.name}>
         {language.name}
       </span>
     );
@@ -44,7 +49,6 @@ export default function AsssemblyEndGame() {
       correct: isCorrect,
       wrong: isWrong,
     })
-    console.log(className)
     
     return (
       <button className={className} key={letterKey} onClick={() => addGuessedLetter(letterKey)}>
