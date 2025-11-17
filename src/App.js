@@ -74,6 +74,25 @@ export default function AsssemblyEndGame() {
     won: isGameWon,
     lost: isGameLost
   })
+  function rederGameStatus(){
+    if(!isGameOver){
+      return null
+    }if(isGameWon){
+      return (
+            <>
+              <h2>You Win!</h2>
+              <p>Well done 🎉</p>
+            </>
+          )
+
+    }else if(isGameLost){
+      return (
+            <>
+              <h2>Game over!</h2>
+              <p>You lose! Better start learning assembly 😢</p>
+            </>
+          )
+  }}
 
   return (
     <main>
@@ -85,22 +104,7 @@ export default function AsssemblyEndGame() {
         </p>
       </header>
       <section className={gameStatusClass}>
-        {isGameOver ? (
-          isGameWon ? (
-            <>
-              <h2>You Win!</h2>
-              <p>Well done 🎉</p>
-            </>
-          ) : (
-            <>
-              <h2>Game over!</h2>
-              <p>You lose! Better start learning assembly 😢</p>
-            </>
-          )
-        ) : (
-          null
-
-        )}
+        {rederGameStatus()}
       </section>
       <section className="language-chips">{languagesElements}</section>
       <section className="word">{letterElements}</section>
