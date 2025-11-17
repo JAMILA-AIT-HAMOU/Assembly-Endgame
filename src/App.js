@@ -1,7 +1,7 @@
 import Header from "./Header";
 import { languages } from "./Languages.js";
 import { useState } from "react";
-import {clsx} from "clsx"
+import { clsx } from "clsx";
 
 export default function AsssemblyEndGame() {
   // state values
@@ -9,10 +9,14 @@ export default function AsssemblyEndGame() {
   const [guessedLetters, setGuessedLetters] = useState([]);
 
   // Derived values
-  const wronGuessCount=guessedLetters.filter(letter=>!currentWord.includes(letter)).length
-  const isGameWon=currentWord.split("").every(letter=>guessedLetters.includes(letter))
-  const isGameLost=wronGuessCount>=languages.length-1
-  const isGameOver=isGameWon || isGameLost
+  const wronGuessCount = guessedLetters.filter(
+    (letter) => !currentWord.includes(letter)
+  ).length;
+  const isGameWon = currentWord
+    .split("")
+    .every((letter) => guessedLetters.includes(letter));
+  const isGameLost = wronGuessCount >= languages.length - 1;
+  const isGameOver = isGameWon || isGameLost;
 
   // static values
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -24,13 +28,12 @@ export default function AsssemblyEndGame() {
   }
 
   const languagesElements = languages.map((language, index) => {
-
-    const islanguageLost=index < wronGuessCount
+    const islanguageLost = index < wronGuessCount;
     const styles = {
       backgroundColor: language.backgroundColor,
       color: language.color,
     };
-    const className=clsx("chip", islanguageLost && "lost")
+    const className = clsx("chip", islanguageLost && "lost");
     return (
       <span className={className} style={styles} key={language.name}>
         {language.name}
@@ -40,26 +43,37 @@ export default function AsssemblyEndGame() {
 
   const letterElements = [...currentWord].map((letter, index) => {
     const capitalLetter = letter.toUpperCase();
-    return <span key={index}>{guessedLetters.includes(letter) ? capitalLetter: ""}</span>;
+    return (
+      <span key={index}>
+        {guessedLetters.includes(letter) ? capitalLetter : ""}
+      </span>
+    );
   });
 
   const keyboardElements = [...alphabet].map((letterKey) => {
-
-    
-    const isGuessed=guessedLetters.includes(letterKey)
-    const isCorrect=isGuessed && currentWord.includes(letterKey)
-    const isWrong=isGuessed && !currentWord.includes(letterKey)
-    const className=clsx({
+    const isGuessed = guessedLetters.includes(letterKey);
+    const isCorrect = isGuessed && currentWord.includes(letterKey);
+    const isWrong = isGuessed && !currentWord.includes(letterKey);
+    const className = clsx({
       correct: isCorrect,
       wrong: isWrong,
-    })
-    
+    });
+
     return (
-      <button className={className} key={letterKey} onClick={() => addGuessedLetter(letterKey)}>
+      <button
+        className={className}
+        key={letterKey}
+        onClick={() => addGuessedLetter(letterKey)}
+      >
         {letterKey.toUpperCase()}
       </button>
     );
   });
+
+  const gameStatusClass=clsx("game-status", {
+    won: isGameWon,
+    lost: isGameLost
+  })
 
   return (
     <main>
@@ -70,15 +84,28 @@ export default function AsssemblyEndGame() {
           from Assembly!
         </p>
       </header>
-      <section className="game-status">
-        <h2>You Win!</h2>
-        <p>Well done 🎉</p>
+      <section className={gameStatusClass}>
+        {isGameOver ? (
+          isGameWon ? (
+            <>
+              <h2>You Win!</h2>
+              <p>Well done 🎉</p>
+            </>
+          ) : (
+            <>
+              <h2>Game over!</h2>
+              <p>You lose! Better start learning assembly 😢</p>
+            </>
+          )
+        ) : (
+          null
+
+        )}
       </section>
       <section className="language-chips">{languagesElements}</section>
       <section className="word">{letterElements}</section>
       <section className="keyboard">{keyboardElements}</section>
-      {isGameOver && 
-      <button className="new-game">New Game</button>}
+      {isGameOver && <button className="new-game">New Game</button>}
     </main>
   );
 }
