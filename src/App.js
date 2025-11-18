@@ -10,13 +10,14 @@ export default function AsssemblyEndGame() {
   const [guessedLetters, setGuessedLetters] = useState([]);
 
   // Derived values
+  const numGuessesLeft=languages.length-1
   const wronGuessCount = guessedLetters.filter(
     (letter) => !currentWord.includes(letter)
   ).length;
   const isGameWon = currentWord
     .split("")
     .every((letter) => guessedLetters.includes(letter));
-  const isGameLost = wronGuessCount >= languages.length - 1;
+  const isGameLost = wronGuessCount >= numGuessesLeft
   const isGameOver = isGameWon || isGameLost;
 
   const lastGuessedLetter = guessedLetters[guessedLetters.length - 1];
@@ -68,6 +69,8 @@ export default function AsssemblyEndGame() {
         className={className}
         key={letterKey}
         disabled={isGameOver}
+        aria-disabled={guessedLetters.includes(letterKey)}
+        aria-label={`Letter ${letterKey}`}
         onClick={() => addGuessedLetter(letterKey)}
       >
         {letterKey.toUpperCase()}
@@ -117,9 +120,22 @@ export default function AsssemblyEndGame() {
           from Assembly!
         </p>
       </header>
-      <section className={gameStatusClass}>{renderGameStatus()}</section>
+      <section 
+        aria-live="polite"
+        role="status" 
+        className={gameStatusClass}>{renderGameStatus()}
+      </section>
       <section className="language-chips">{languagesElements}</section>
       <section className="word">{letterElements}</section>
+      <section className="sr-only" 
+        aria-live="polite"
+        role="status" >
+          <p>
+            {currentWord.includes(lastGuessedLetter) ? `Correct: The letter ${lastGuessedLetter} is in the word` : `Sorry, the letter ${lastGuessedLetter} is not in the word`}
+            You have {numGuessesLeft} attempts left
+          </p>
+          <p>Current word: {currentWord.split("").map(letter=>guessedLetters.includes(letter) ? letter + "." :"blank.").join(" ")}</p>
+      </section>
       <section className="keyboard">{keyboardElements}</section>
       {isGameOver && <button className="new-game">New Game</button>}
     </main>
