@@ -2,6 +2,7 @@ import Header from "./Header";
 import { languages } from "./Languages.js";
 import { useState } from "react";
 import { clsx } from "clsx";
+import { getFarewellText } from "./utils.js";
 
 export default function AsssemblyEndGame() {
   // state values
@@ -18,6 +19,9 @@ export default function AsssemblyEndGame() {
   const isGameLost = wronGuessCount >= languages.length - 1;
   const isGameOver = isGameWon || isGameLost;
 
+  const lastGuessedLetter = guessedLetters[guessedLetters.length - 1];
+  const isLastGuessIncorrect =
+    lastGuessedLetter && !currentWord.includes(lastGuessedLetter);
   // static values
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -70,29 +74,38 @@ export default function AsssemblyEndGame() {
     );
   });
 
-  const gameStatusClass=clsx("game-status", {
+  const gameStatusClass = clsx("game-status", {
     won: isGameWon,
-    lost: isGameLost
-  })
-  function rederGameStatus(){
-    if(!isGameOver){
-      return null
-    }if(isGameWon){
+    lost: isGameLost,
+    farewell:!isGameOver && isLastGuessIncorrect
+  });
+  function renderGameStatus() {
+    if (!isGameOver && isLastGuessIncorrect) {
+      return(
+         <p className="farewell-message ">
+          {getFarewellText(languages[wronGuessCount-1].name)}
+         </p>
+      )
+      
+    }
+    if (isGameWon) {
       return (
-            <>
-              <h2>You Win!</h2>
-              <p>Well done 🎉</p>
-            </>
-          )
-
-    }else if(isGameLost){
+        <>
+          <h2>You Win!</h2>
+          <p>Well done 🎉</p>
+        </>
+      );
+    }
+    if (isGameLost) {
       return (
-            <>
-              <h2>Game over!</h2>
-              <p>You lose! Better start learning assembly 😢</p>
-            </>
-          )
-  }}
+        <>
+          <h2>Game over!</h2>
+          <p>You lose! Better start learning assembly 😢</p>
+        </>
+      );
+    }
+    return null
+  }
 
   return (
     <main>
@@ -103,9 +116,7 @@ export default function AsssemblyEndGame() {
           from Assembly!
         </p>
       </header>
-      <section className={gameStatusClass}>
-        {rederGameStatus()}
-      </section>
+      <section className={gameStatusClass}>{renderGameStatus()}</section>
       <section className="language-chips">{languagesElements}</section>
       <section className="word">{letterElements}</section>
       <section className="keyboard">{keyboardElements}</section>
