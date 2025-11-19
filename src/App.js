@@ -31,6 +31,11 @@ export default function AsssemblyEndGame() {
       prevLetter.includes(letter) ? prevLetter : [...prevLetter, letter]
     );
   }
+  function startNewGame(){
+    setCurrentWord(getRandomWord())
+    setGuessedLetters([])
+    
+  }
 
   const languagesElements = languages.map((language, index) => {
     const islanguageLost = index < wronGuessCount;
@@ -137,7 +142,7 @@ export default function AsssemblyEndGame() {
           <p>Current word: {currentWord.split("").map(letter=>guessedLetters.includes(letter) ? letter + "." :"blank.").join(" ")}</p>
       </section>
       <section className="keyboard">{keyboardElements}</section>
-      {isGameOver && <button className="new-game">New Game</button>}
+      {isGameOver && <button className="new-game" onClick={startNewGame}>New Game</button>}
     </main>
   );
 }
