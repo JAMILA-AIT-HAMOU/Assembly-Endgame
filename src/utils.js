@@ -5,20 +5,20 @@ export function getRandomWord(){
     return words[randomIndex]
 }
 
-export function getFarewellText(language) {
+export function getFarewellText(level) {
     const options = [
-        `Farewell, ${language}`,
-        `Adios, ${language}`,
-        `R.I.P., ${language}`,
-        `We'll miss you, ${language}`,
-        `Oh no, not ${language}!`,
-        `${language} bites the dust`,
-        `Gone but not forgotten, ${language}`,
-        `The end of ${language} as we know it`,
-        `Off into the sunset, ${language}`,
-        `${language}, it's been real`,
-        `${language}, your watch has ended`,
-        `${language} has left the building`
+        `Farewell, ${level}`,
+        `Adios, ${level}`,
+        `R.I.P., ${level}`,
+        `We'll miss you, ${level}`,
+        `Oh no, not ${level}!`,
+        `${level} bites the dust`,
+        `Gone but not forgotten, ${level}`,
+        `The end of ${level} as we know it`,
+        `Off into the sunset, ${level}`,
+        `${level}, it's been real`,
+        `${level}, your watch has ended`,
+        `${level} has left the building`
     ];
 
     const randomIndex = Math.floor(Math.random() * options.length);

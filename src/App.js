@@ -1,5 +1,5 @@
-import Header from "./Header";
-import { languages } from "./Languages.js";
+
+import { levels } from "./levels.js";
 import { useState } from "react";
 import { clsx } from "clsx";
 import { getFarewellText, getRandomWord } from "./utils.js";
@@ -7,18 +7,18 @@ import Confetti from "react-confetti";
 
 export default function AsssemblyEndGame() {
   // state values
-  const [currentWord, setCurrentWord] = useState(()=>getRandomWord());
+  const [currentWord, setCurrentWord] = useState(() => getRandomWord());
   const [guessedLetters, setGuessedLetters] = useState([]);
 
   // Derived values
-  const numGuessesLeft=languages.length-1
+  const numGuessesLeft = levels.length - 1;
   const wronGuessCount = guessedLetters.filter(
     (letter) => !currentWord.includes(letter)
   ).length;
   const isGameWon = currentWord
     .split("")
     .every((letter) => guessedLetters.includes(letter));
-  const isGameLost = wronGuessCount >= numGuessesLeft
+  const isGameLost = wronGuessCount >= numGuessesLeft;
   const isGameOver = isGameWon || isGameLost;
 
   const lastGuessedLetter = guessedLetters[guessedLetters.length - 1];
@@ -32,32 +32,33 @@ export default function AsssemblyEndGame() {
       prevLetter.includes(letter) ? prevLetter : [...prevLetter, letter]
     );
   }
-  function startNewGame(){
-    setCurrentWord(getRandomWord())
-    setGuessedLetters([])
-    
+  function startNewGame() {
+    setCurrentWord(getRandomWord());
+    setGuessedLetters([]);
   }
 
-  const languagesElements = languages.map((language, index) => {
-    const islanguageLost = index < wronGuessCount;
+  const levelsElements = levels.map((level, index) => {
+    const islevelLost = index < wronGuessCount;
     const styles = {
-      backgroundColor: language.backgroundColor,
-      color: language.color,
+      backgroundColor: level.backgroundColor,
+      color: level.color,
     };
-    const className = clsx("chip", islanguageLost && "lost");
+    const className = clsx("chip", islevelLost && "lost");
     return (
-      <span className={className} style={styles} key={language.name}>
-        {language.name}
-      </span>
+      <>
+        <span className={className} style={styles} key={level.name}>
+          {level.name + level.icon}
+        </span>
+      </>
     );
   });
 
   const letterElements = [...currentWord].map((letter, index) => {
     const capitalLetter = letter.toUpperCase();
-    const shouldRevealLetter= isGameLost || guessedLetters.includes(letter)
-    const letterClassName =clsx(
+    const shouldRevealLetter = isGameLost || guessedLetters.includes(letter);
+    const letterClassName = clsx(
       isGameLost && !guessedLetters.includes(letter) && "missed-letter"
-    )
+    );
     return (
       <span key={index} className={letterClassName}>
         {shouldRevealLetter ? capitalLetter : ""}
@@ -91,16 +92,15 @@ export default function AsssemblyEndGame() {
   const gameStatusClass = clsx("game-status", {
     won: isGameWon,
     lost: isGameLost,
-    farewell:!isGameOver && isLastGuessIncorrect
+    farewell: !isGameOver && isLastGuessIncorrect,
   });
   function renderGameStatus() {
     if (!isGameOver && isLastGuessIncorrect) {
-      return(
-         <p className="farewell-message ">
-          {getFarewellText(languages[wronGuessCount-1].name)}
-         </p>
-      )
-      
+      return (
+        <p className="farewell-message ">
+          {getFarewellText(levels[wronGuessCount - 1].name)}
+        </p>
+      );
     }
     if (isGameWon) {
       return (
@@ -118,42 +118,48 @@ export default function AsssemblyEndGame() {
         </>
       );
     }
-    return null
+    return null;
   }
 
   return (
     <main>
-      {
-        isGameWon && <Confetti
-            recycle={false}
-            numberOfPieces={1000} />
-      }
+      {isGameWon && <Confetti recycle={false} numberOfPieces={1000} />}
 
       <header>
         <h1> Assembly: Endgame </h1>
         <p>
-          Guess the word within 8 attempts to keep the programming world safe
-          from Assembly!
+          You have 8 chances to guess the word - every wrong letter costs you
+          one level !!!.
         </p>
       </header>
-      <section 
-        aria-live="polite"
-        role="status" 
-        className={gameStatusClass}>{renderGameStatus()}
+      <section aria-live="polite" role="status" className={gameStatusClass}>
+        {renderGameStatus()}
       </section>
-      <section className="language-chips">{languagesElements}</section>
+      <section className="level-chips">{levelsElements}</section>
       <section className="word">{letterElements}</section>
-      <section className="sr-only" 
-        aria-live="polite"
-        role="status" >
-          <p>
-            {currentWord.includes(lastGuessedLetter) ? `Correct: The letter ${lastGuessedLetter} is in the word` : `Sorry, the letter ${lastGuessedLetter} is not in the word`}
-            You have {numGuessesLeft} attempts left
-          </p>
-          <p>Current word: {currentWord.split("").map(letter=>guessedLetters.includes(letter) ? letter + "." :"blank.").join(" ")}</p>
+      <section className="sr-only" aria-live="polite" role="status">
+        <p>
+          {currentWord.includes(lastGuessedLetter)
+            ? `Correct: The letter ${lastGuessedLetter} is in the word`
+            : `Sorry, the letter ${lastGuessedLetter} is not in the word`}
+          You have {numGuessesLeft} attempts left
+        </p>
+        <p>
+          Current word:{" "}
+          {currentWord
+            .split("")
+            .map((letter) =>
+              guessedLetters.includes(letter) ? letter + "." : "blank."
+            )
+            .join(" ")}
+        </p>
       </section>
       <section className="keyboard">{keyboardElements}</section>
-      {isGameOver && <button className="new-game" onClick={startNewGame}>New Game</button>}
+      {isGameOver && (
+        <button className="new-game" onClick={startNewGame}>
+          New Game
+        </button>
+      )}
     </main>
   );
 }
