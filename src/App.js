@@ -1,6 +1,6 @@
 
 import { levels } from "./levels.js";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { clsx } from "clsx";
 import { getFarewellText, getRandomWord } from "./utils.js";
 import Confetti from "react-confetti";
@@ -9,6 +9,7 @@ export default function AsssemblyEndGame() {
   // state values
   const [currentWord, setCurrentWord] = useState(() => getRandomWord());
   const [guessedLetters, setGuessedLetters] = useState([]);
+  const [revealeWord, setRevealWord]=useState("")
 
   // Derived values
   const numGuessesLeft = levels.length - 1;
@@ -45,22 +46,47 @@ export default function AsssemblyEndGame() {
     };
     const className = clsx("chip", islevelLost && "lost");
     return (
-      <>
-        <span className={className} style={styles} key={level.name}>
+        <span className={className} style={styles} key={level.name} >
           {level.name + level.icon}
         </span>
-      </>
     );
   });
 
+  // reveal the correct word
+  useEffect(()=>{
+    if(isGameLost && revealeWord.length===0){
+      let index=0
+      const interval=setInterval(()=>{
+        setRevealWord(prev=>prev + currentWord[index])
+        index++
+        if(index===currentWord.length){
+          clearInterval(interval)
+        }
+
+      }, 150)
+       return ()=>clearInterval(interval)
+
+    }
+  },[isGameLost,currentWord])
+  
+
+
+
   const letterElements = [...currentWord].map((letter, index) => {
-    const capitalLetter = letter.toUpperCase();
-    const shouldRevealLetter = isGameLost || guessedLetters.includes(letter);
-    const letterClassName = clsx(
+    const capitalLetter = letter.toUpperCase();const letterClassName = clsx(
       isGameLost && !guessedLetters.includes(letter) && "missed-letter"
     );
+    // if lost use animation 
+    if(isGameLost){
+      const animatedaletter=revealeWord[index] || ""
+      return <span key={index} className={letterClassName}>{animatedaletter.toUpperCase()}</span>
+    }
+
+
+    const shouldRevealLetter = guessedLetters.includes(letter);
+    
     return (
-      <span key={index} className={letterClassName}>
+      <span key={index} className={letterClassName} >
         {shouldRevealLetter ? capitalLetter : ""}
       </span>
     );
@@ -121,6 +147,9 @@ export default function AsssemblyEndGame() {
     return null;
   }
 
+
+
+  
   return (
     <main>
       {isGameWon && <Confetti recycle={false} numberOfPieces={1000} />}
