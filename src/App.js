@@ -149,6 +149,23 @@ export default function AsssemblyEndGame() {
 
 
 
+  // A thin bar start full and decrease with wrong guesses
+  const maxGuesses= levels.length -1
+  const progressPrecent= Math.max(0, ((maxGuesses - wronGuessCount) /maxGuesses)* 100)
+
+      // Dynamic color
+      let progressColor="#4caf50"
+      if(wronGuessCount >= maxGuesses -1){
+        progressColor= " #f44336" 
+      }else if(wronGuessCount >maxGuesses / 2){
+        progressColor = "#ff9800"
+      }else if(wronGuessCount >maxGuesses / 3){
+        progressColor = "#b3ff00ff"
+      }
+
+
+
+
   
   return (
     <main>
@@ -165,6 +182,15 @@ export default function AsssemblyEndGame() {
         {renderGameStatus()}
       </section>
       <section className="level-chips">{levelsElements}</section>
+      <div className="progress-bar-container">
+        <div className="progress-bar" style={{
+          width: `${progressPrecent}%`,
+          backgroundColor:progressColor
+        }}>
+
+        </div>
+
+      </div>
       <section className="word">{letterElements}</section>
       <section className="sr-only" aria-live="polite" role="status">
         <p>
