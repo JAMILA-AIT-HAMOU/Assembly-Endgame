@@ -2,14 +2,17 @@
 import { levels } from "./levels.js";
 import { useState, useEffect} from "react";
 import { clsx } from "clsx";
-import { getFarewellText, getRandomWord } from "./utils.js";
+import { getFarewellText, getRandomWord, getEncourageWord } from "./utils.js";
 import Confetti from "react-confetti";
+
+
 
 export default function AsssemblyEndGame() {
   // state values
   const [currentWord, setCurrentWord] = useState(() => getRandomWord());
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [revealeWord, setRevealWord]=useState("")
+
 
   // Derived values
   const numGuessesLeft = levels.length - 1;
@@ -116,17 +119,28 @@ export default function AsssemblyEndGame() {
   });
 
   const gameStatusClass = clsx("game-status", {
-    won: isGameWon,
+    won: isGameWon, 
     lost: isGameLost,
-    farewell: !isGameOver && isLastGuessIncorrect,
+    farewell: !isGameOver && isLastGuessIncorrect,encourage: !isGameOver && !isLastGuessIncorrect,
   });
   function renderGameStatus() {
+    if (!isGameOver && guessedLetters.length===0){
+      return <p className="farewell-message">Are You Ready?</p>
+    }
+    
     if (!isGameOver && isLastGuessIncorrect) {
       return (
         <p className="farewell-message ">
           {getFarewellText(levels[wronGuessCount - 1].name)}
         </p>
       );
+    }if(!isGameOver && !isLastGuessIncorrect){
+       return (
+        <p className="farewell-message ">
+          {getEncourageWord()}
+        </p>
+      );
+
     }
     if (isGameWon) {
       return (

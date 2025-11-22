@@ -50,6 +50,11 @@ section.game-status.farewell {
  background-color: #7A5EA7;
  border: 1px dashed #323232;
 }
+section.game-status.encourage {
+ background-color: #069bb2;
+ border: 1px dashed #323232;
+}
+
 section.game-status > h2 {
   font-size: 1.25rem;
   margin: 5px;
@@ -163,7 +168,9 @@ button.new-game {
 }
 .progress-bar-container{
   height: 6px;
-  width: 69%;
+  max-width: 500px;
+  min-width: 460px;
+  width: 100%;
   background-color: #ddd;
   border-radius: 3px;
   overflow: hidden;
