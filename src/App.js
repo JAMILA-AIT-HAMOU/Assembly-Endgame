@@ -12,6 +12,7 @@ export default function AsssemblyEndGame() {
   const [currentWord, setCurrentWord] = useState(()=>getRandomWord());
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [revealeWord, setRevealWord]=useState("")
+  const [hintUsed, setHintUsed]= useState(false)
 
 
   // Derived values
@@ -39,7 +40,22 @@ export default function AsssemblyEndGame() {
   function startNewGame() {
     setCurrentWord(getRandomWord());
     setGuessedLetters([]);
+    setHintUsed(false)
     setRevealWord("")
+  }
+  function useHint(){
+    if(hintUsed || isGameOver) return;
+    // find unreveald letters
+    const unreveald= currentWord
+      .split("")
+      .filter(letter=>!guessedLetters.includes(letter))
+    
+    if (unreveald.length===0 )return;
+    const randomLetter= unreveald[Math.floor(Math.random() * unreveald.length)]
+    // reveal it 
+    setGuessedLetters(prev => [...prev, randomLetter])
+    // Mark hint as used
+    setHintUsed(true)
   }
 
   const levelsElements = levels.map((level, index) => {
@@ -94,6 +110,8 @@ export default function AsssemblyEndGame() {
     );
   });
 
+
+  
   const keyboardElements = [...alphabet].map((letterKey) => {
     const isGuessed = guessedLetters.includes(letterKey);
     const isCorrect = isGuessed && currentWord.includes(letterKey);
@@ -222,6 +240,9 @@ export default function AsssemblyEndGame() {
             .join(" ")}
         </p>
       </section>
+      {!isGameOver && (
+        <button className="hint-btn" onClick={useHint} disabled={hintUsed}>{hintUsed ? "Hint Used" : "Use Hint"}</button>
+      )}
       <section className="keyboard">{keyboardElements}</section>
       {isGameOver && (
         <button className="new-game" onClick={startNewGame}>

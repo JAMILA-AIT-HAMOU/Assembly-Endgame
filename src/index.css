@@ -101,7 +101,7 @@ section.word {
   display: flex;
   gap: 2px;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 .word > span {
   background-color: #323232;
@@ -183,3 +183,21 @@ button.new-game {
 
 }
 
+button.hint-btn{
+  
+  background-color: #11b5e5;
+  border: 1px solid #d7d7d7;
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: block;
+  margin-inline: auto;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button.hint-btn:disabled{
+   cursor: not-allowed;
+  opacity: 0.8;
+
+}
