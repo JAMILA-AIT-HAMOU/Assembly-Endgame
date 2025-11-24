@@ -9,7 +9,7 @@ import Confetti from "react-confetti";
 
 export default function AsssemblyEndGame() {
   // state values
-  const [currentWord, setCurrentWord] = useState(() => getRandomWord());
+  const [currentWord, setCurrentWord] = useState(()=>getRandomWord());
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [revealeWord, setRevealWord]=useState("")
 
@@ -39,6 +39,7 @@ export default function AsssemblyEndGame() {
   function startNewGame() {
     setCurrentWord(getRandomWord());
     setGuessedLetters([]);
+    setRevealWord("")
   }
 
   const levelsElements = levels.map((level, index) => {
@@ -58,16 +59,14 @@ export default function AsssemblyEndGame() {
   // reveal the correct word
   useEffect(()=>{
     if(isGameLost && revealeWord.length===0){
-      let index=0
-      const interval=setInterval(()=>{
-        setRevealWord(prev=>prev + currentWord[index])
-        index++
-        if(index===currentWord.length){
-          clearInterval(interval)
-        }
+      const revealLetters=(index= 0)=>{
+        if(index < currentWord.length){
+          setRevealWord(prev=>prev + currentWord[index])
+          setTimeout(()=>revealLetters(index +1), 150)
 
-      }, 150)
-       return ()=>clearInterval(interval)
+        }
+      }
+      revealLetters()
 
     }
   },[isGameLost,currentWord])
