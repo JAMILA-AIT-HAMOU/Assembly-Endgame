@@ -1,19 +1,16 @@
-
 import { levels } from "./levels.js";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { clsx } from "clsx";
 import { getFarewellText, getRandomWord, getEncourageWord } from "./utils.js";
 import Confetti from "react-confetti";
 
-
-
 export default function AsssemblyEndGame() {
   // state values
-  const [currentWord, setCurrentWord] = useState(()=>getRandomWord());
+  const [currentWord, setCurrentWord] = useState(() => getRandomWord());
   const [guessedLetters, setGuessedLetters] = useState([]);
-  const [revealeWord, setRevealWord]=useState("")
-  const [hintUsed, setHintUsed]= useState(false)
-
+  const [revealeWord, setRevealWord] = useState("");
+  const [hintUsed, setHintUsed] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   // Derived values
   const numGuessesLeft = levels.length - 1;
@@ -40,22 +37,24 @@ export default function AsssemblyEndGame() {
   function startNewGame() {
     setCurrentWord(getRandomWord());
     setGuessedLetters([]);
-    setHintUsed(false)
-    setRevealWord("")
+    setHintUsed(false);
+    setRevealWord("");
+    setGameStarted(false)
   }
-  function useHint(){
-    if(hintUsed || isGameOver) return;
+  function useHint() {
+    if (hintUsed || isGameOver) return;
     // find unreveald letters
-    const unreveald= currentWord
+    const unreveald = currentWord
       .split("")
-      .filter(letter=>!guessedLetters.includes(letter))
-    
-    if (unreveald.length===0 )return;
-    const randomLetter= unreveald[Math.floor(Math.random() * unreveald.length)]
-    // reveal it 
-    setGuessedLetters(prev => [...prev, randomLetter])
+      .filter((letter) => !guessedLetters.includes(letter));
+
+    if (unreveald.length === 0) return;
+    const randomLetter =
+      unreveald[Math.floor(Math.random() * unreveald.length)];
+    // reveal it
+    setGuessedLetters((prev) => [...prev, randomLetter]);
     // Mark hint as used
-    setHintUsed(true)
+    setHintUsed(true);
   }
 
   const levelsElements = levels.map((level, index) => {
@@ -66,52 +65,49 @@ export default function AsssemblyEndGame() {
     };
     const className = clsx("chip", islevelLost && "lost");
     return (
-        <span className={className} style={styles} key={level.name} >
-          {level.name + level.icon}
-        </span>
+      <span className={className} style={styles} key={level.name}>
+        {level.name + level.icon}
+      </span>
     );
   });
 
   // reveal the correct word
-  useEffect(()=>{
-    if(isGameLost && revealeWord.length===0){
-      const revealLetters=(index= 0)=>{
-        if(index < currentWord.length){
-          setRevealWord(prev=>prev + currentWord[index])
-          setTimeout(()=>revealLetters(index +1), 150)
-
+  useEffect(() => {
+    if (isGameLost && revealeWord.length === 0) {
+      const revealLetters = (index = 0) => {
+        if (index < currentWord.length) {
+          setRevealWord((prev) => prev + currentWord[index]);
+          setTimeout(() => revealLetters(index + 1), 150);
         }
-      }
-      revealLetters()
-
+      };
+      revealLetters();
     }
-  },[isGameLost,currentWord])
-  
-
-
+  }, [isGameLost, currentWord]);
 
   const letterElements = [...currentWord].map((letter, index) => {
-    const capitalLetter = letter.toUpperCase();const letterClassName = clsx(
+    const capitalLetter = letter.toUpperCase();
+    const letterClassName = clsx(
       isGameLost && !guessedLetters.includes(letter) && "missed-letter"
     );
-    // if lost use animation 
-    if(isGameLost){
-      const animatedaletter=revealeWord[index] || ""
-      return <span key={index} className={letterClassName}>{animatedaletter.toUpperCase()}</span>
+    // if lost use animation
+    if (isGameLost) {
+      const animatedaletter = revealeWord[index] || "";
+      return (
+        <span key={index} className={letterClassName}>
+          {animatedaletter.toUpperCase()}
+        </span>
+      );
     }
 
-
     const shouldRevealLetter = guessedLetters.includes(letter);
-    
+
     return (
-      <span key={index} className={letterClassName} >
+      <span key={index} className={letterClassName}>
         {shouldRevealLetter ? capitalLetter : ""}
       </span>
     );
   });
 
-
-  
   const keyboardElements = [...alphabet].map((letterKey) => {
     const isGuessed = guessedLetters.includes(letterKey);
     const isCorrect = isGuessed && currentWord.includes(letterKey);
@@ -136,28 +132,25 @@ export default function AsssemblyEndGame() {
   });
 
   const gameStatusClass = clsx("game-status", {
-    won: isGameWon, 
+    won: isGameWon,
     lost: isGameLost,
-    farewell: !isGameOver && isLastGuessIncorrect,encourage: !isGameOver && !isLastGuessIncorrect,
+    farewell: !isGameOver && isLastGuessIncorrect,
+    encourage: !isGameOver && !isLastGuessIncorrect,
   });
   function renderGameStatus() {
-    if (!isGameOver && guessedLetters.length===0){
-      return <p className="farewell-message">Are You Ready?</p>
+    if (!isGameOver && guessedLetters.length === 0) {
+      return <p className="farewell-message">Are You Ready?</p>;
     }
-    
+
     if (!isGameOver && isLastGuessIncorrect) {
       return (
         <p className="farewell-message ">
           {getFarewellText(levels[wronGuessCount - 1].name)}
         </p>
       );
-    }if(!isGameOver && !isLastGuessIncorrect){
-       return (
-        <p className="farewell-message ">
-          {getEncourageWord()}
-        </p>
-      );
-
+    }
+    if (!isGameOver && !isLastGuessIncorrect) {
+      return <p className="farewell-message ">{getEncourageWord()}</p>;
     }
     if (isGameWon) {
       return (
@@ -178,77 +171,93 @@ export default function AsssemblyEndGame() {
     return null;
   }
 
-
-
   // A thin bar start full and decrease with wrong guesses
-  const maxGuesses= levels.length -1
-  const progressPrecent= Math.max(0, ((maxGuesses - wronGuessCount) /maxGuesses)* 100)
+  const maxGuesses = levels.length - 1;
+  const progressPrecent = Math.max(
+    0,
+    ((maxGuesses - wronGuessCount) / maxGuesses) * 100
+  );
 
-      // Dynamic color
-      let progressColor="#4caf50"
-      if(wronGuessCount >= maxGuesses -1){
-        progressColor= " #f44336" 
-      }else if(wronGuessCount >maxGuesses / 2){
-        progressColor = "#ff9800"
-      }else if(wronGuessCount >maxGuesses / 3){
-        progressColor = "#b3ff00ff"
-      }
+  // Dynamic color
+  let progressColor = "#4caf50";
+  if (wronGuessCount >= maxGuesses - 1) {
+    progressColor = " #f44336";
+  } else if (wronGuessCount > maxGuesses / 2) {
+    progressColor = "#ff9800";
+  } else if (wronGuessCount > maxGuesses / 3) {
+    progressColor = "#b3ff00ff";
+  }
 
-
-
-
-  
   return (
-    <main>
-      {isGameWon && <Confetti recycle={false} numberOfPieces={1000} />}
-
-      <header>
-        <h1> Assembly: Endgame </h1>
-        <p>
-          You have 8 chances to guess the word - every wrong letter costs you
-          one level !!!.
-        </p>
-      </header>
-      <section aria-live="polite" role="status" className={gameStatusClass}>
-        {renderGameStatus()}
-      </section>
-      <section className="level-chips">{levelsElements}</section>
-      <div className="progress-bar-container">
-        <div className="progress-bar" style={{
-          width: `${progressPrecent}%`,
-          backgroundColor:progressColor
-        }}>
+    <>
+    {/* start screen */}
+      {!gameStarted && 
+        <div className="start-screen">
+            <h1> Assembly: Endgame </h1>
+            <p>Are you ready to test your memory?</p>
+            <button className="start-btn" onClick={()=>{setGameStarted(true)}}>
+              Start Game
+            </button>
 
         </div>
+      }
 
-      </div>
-      <section className="word">{letterElements}</section>
-      <section className="sr-only" aria-live="polite" role="status">
-        <p>
-          {currentWord.includes(lastGuessedLetter)
-            ? `Correct: The letter ${lastGuessedLetter} is in the word`
-            : `Sorry, the letter ${lastGuessedLetter} is not in the word`}
-          You have {numGuessesLeft} attempts left
-        </p>
-        <p>
-          Current word:{" "}
-          {currentWord
-            .split("")
-            .map((letter) =>
-              guessedLetters.includes(letter) ? letter + "." : "blank."
-            )
-            .join(" ")}
-        </p>
-      </section>
-      {!isGameOver && (
-        <button className="hint-btn" onClick={useHint} disabled={hintUsed}>{hintUsed ? "Hint Used" : "Use Hint"}</button>
+    {/*  the main game */}
+      {gameStarted && (
+        <main>
+          {isGameWon && <Confetti recycle={false} numberOfPieces={1000} />}
+
+          <header>
+            <h1> Assembly: Endgame </h1>
+            <p>
+              You have 8 chances to guess the word - every wrong letter costs
+              you one level !!!.
+            </p>
+          </header>
+          <section aria-live="polite" role="status" className={gameStatusClass}>
+            {renderGameStatus()}
+          </section>
+          <section className="level-chips">{levelsElements}</section>
+          <div className="progress-bar-container">
+            <div
+              className="progress-bar"
+              style={{
+                width: `${progressPrecent}%`,
+                backgroundColor: progressColor,
+              }}
+            ></div>
+          </div>
+          <section className="word">{letterElements}</section>
+          <section className="sr-only" aria-live="polite" role="status">
+            <p>
+              {currentWord.includes(lastGuessedLetter)
+                ? `Correct: The letter ${lastGuessedLetter} is in the word`
+                : `Sorry, the letter ${lastGuessedLetter} is not in the word`}
+              You have {numGuessesLeft} attempts left
+            </p>
+            <p>
+              Current word:{" "}
+              {currentWord
+                .split("")
+                .map((letter) =>
+                  guessedLetters.includes(letter) ? letter + "." : "blank."
+                )
+                .join(" ")}
+            </p>
+          </section>
+          {!isGameOver && (
+            <button className="hint-btn" onClick={useHint} disabled={hintUsed}>
+              {hintUsed ? "Hint Used" : "Use Hint"}
+            </button>
+          )}
+          <section className="keyboard">{keyboardElements}</section>
+          {isGameOver && (
+            <button className="new-game" onClick={startNewGame}>
+              New Game
+            </button>
+          )}
+        </main>
       )}
-      <section className="keyboard">{keyboardElements}</section>
-      {isGameOver && (
-        <button className="new-game" onClick={startNewGame}>
-          New Game
-        </button>
-      )}
-    </main>
+    </>
   );
 }
