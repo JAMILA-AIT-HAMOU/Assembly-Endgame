@@ -10,7 +10,8 @@ export default function AsssemblyEndGame() {
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [revealeWord, setRevealWord] = useState("");
   const [hintUsed, setHintUsed] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
+  // const [gameStarted, setGameStarted] = useState(false);
+  const [gameScreen, setGameScreen] = useState("start");
 
   // Derived values
   const numGuessesLeft = levels.length - 1;
@@ -39,7 +40,6 @@ export default function AsssemblyEndGame() {
     setGuessedLetters([]);
     setHintUsed(false);
     setRevealWord("");
-    setGameStarted(false)
   }
   function useHint() {
     if (hintUsed || isGameOver) return;
@@ -190,20 +190,31 @@ export default function AsssemblyEndGame() {
 
   return (
     <>
-    {/* start screen */}
-      {!gameStarted && 
+      {/* start screen */}
+      {gameScreen === "start" && (
         <div className="start-screen">
-            <h1> Assembly: Endgame </h1>
-            <p>Are you ready to test your memory?</p>
-            <button className="start-btn" onClick={()=>{setGameStarted(true)}}>
-              Start Game
-            </button>
-
+          <h1> Assembly: Endgame </h1>
+          <p>Are you ready to test your memory?</p>
+          <button className="start-btn" onClick={() => setGameScreen("level")}>
+            Start Game
+          </button>
         </div>
-      }
+      )}
+      {/* level screen */}
+      {gameScreen === "level" && (
+        <div className="level-screen">
+          <h1>Select Difficulty</h1>
+          <div className="level-btn">
+            <button onClick={() => setGameScreen("game")}>Easy</button>
+            <button onClick={() => setGameScreen("game")}>Medium</button>
+            <button onClick={() => setGameScreen("game")}>Hard</button>
+            <button onClick={() => setGameScreen("game")}>Impossible</button>
+          </div>
+        </div>
+      )}
 
-    {/*  the main game */}
-      {gameStarted && (
+      {/*  the main screen*/}
+      {gameScreen === "game" && (
         <main>
           {isGameWon && <Confetti recycle={false} numberOfPieces={1000} />}
 
