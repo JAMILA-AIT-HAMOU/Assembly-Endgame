@@ -1,8 +1,9 @@
 import { words } from "./words.js";
 
-export function getRandomWord() {
-  const randomIndex = Math.floor(Math.random() * words.length);
-  return words[randomIndex];
+export function getRandomWord(difficulty) {
+  const randomWord=words[difficulty]
+  const randomIndex=Math.floor(Math.random() * randomWord.length)
+  return randomWord[randomIndex]
 }
 
 export function getFarewellText(level) {

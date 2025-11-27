@@ -5,23 +5,25 @@ import { getFarewellText, getRandomWord, getEncourageWord } from "./utils.js";
 import Confetti from "react-confetti";
 
 export default function AsssemblyEndGame() {
-  // state values
-  const [currentWord, setCurrentWord] = useState(() => getRandomWord());
+  // state 
+  const [difficulty, setDifficulty]=useState(null)
+  const [currentWord, setCurrentWord] = useState("");
   const [guessedLetters, setGuessedLetters] = useState([]);
-  const [revealeWord, setRevealWord] = useState("");
+  const [revealWord, setRevealWord] = useState("");
   const [hintUsed, setHintUsed] = useState(false);
   // const [gameStarted, setGameStarted] = useState(false);
   const [gameScreen, setGameScreen] = useState("start");
 
-  // Derived values
-  const numGuessesLeft = levels.length - 1;
-  const wronGuessCount = guessedLetters.filter(
+  // Derived values 
+  
+  const wrongGuessCount = guessedLetters.filter(
     (letter) => !currentWord.includes(letter)
   ).length;
+  const numGuessesLeft = levels.length - 1 
   const isGameWon = currentWord
     .split("")
     .every((letter) => guessedLetters.includes(letter));
-  const isGameLost = wronGuessCount >= numGuessesLeft;
+  const isGameLost = wrongGuessCount >= numGuessesLeft;
   const isGameOver = isGameWon || isGameLost;
 
   const lastGuessedLetter = guessedLetters[guessedLetters.length - 1];
@@ -36,10 +38,23 @@ export default function AsssemblyEndGame() {
     );
   }
   function startNewGame() {
-    setCurrentWord(getRandomWord());
+    const newWord=getRandomWord(difficulty)
+    setCurrentWord(newWord)
     setGuessedLetters([]);
     setHintUsed(false);
     setRevealWord("");
+  }
+  function selectLevel(selectedLevel){
+    setDifficulty(selectedLevel)
+
+    const word =getRandomWord(selectedLevel)
+    setCurrentWord(word)
+    
+    setGuessedLetters([]);
+    setHintUsed(false);
+    setRevealWord("");
+    setGameScreen("game")
+
   }
   function useHint() {
     if (hintUsed || isGameOver) return;
@@ -58,7 +73,7 @@ export default function AsssemblyEndGame() {
   }
 
   const levelsElements = levels.map((level, index) => {
-    const islevelLost = index < wronGuessCount;
+    const islevelLost = index < wrongGuessCount;
     const styles = {
       backgroundColor: level.backgroundColor,
       color: level.color,
@@ -73,7 +88,7 @@ export default function AsssemblyEndGame() {
 
   // reveal the correct word
   useEffect(() => {
-    if (isGameLost && revealeWord.length === 0) {
+    if (isGameLost && revealWord.length === 0) {
       const revealLetters = (index = 0) => {
         if (index < currentWord.length) {
           setRevealWord((prev) => prev + currentWord[index]);
@@ -91,7 +106,7 @@ export default function AsssemblyEndGame() {
     );
     // if lost use animation
     if (isGameLost) {
-      const animatedaletter = revealeWord[index] || "";
+      const animatedaletter = revealWord[index] || "";
       return (
         <span key={index} className={letterClassName}>
           {animatedaletter.toUpperCase()}
@@ -145,7 +160,7 @@ export default function AsssemblyEndGame() {
     if (!isGameOver && isLastGuessIncorrect) {
       return (
         <p className="farewell-message ">
-          {getFarewellText(levels[wronGuessCount - 1].name)}
+          {getFarewellText(levels[wrongGuessCount - 1].name)}
         </p>
       );
     }
@@ -175,16 +190,16 @@ export default function AsssemblyEndGame() {
   const maxGuesses = levels.length - 1;
   const progressPrecent = Math.max(
     0,
-    ((maxGuesses - wronGuessCount) / maxGuesses) * 100
+    ((maxGuesses - wrongGuessCount) / maxGuesses) * 100
   );
 
   // Dynamic color
   let progressColor = "#4caf50";
-  if (wronGuessCount >= maxGuesses - 1) {
+  if (wrongGuessCount >= maxGuesses - 1) {
     progressColor = " #f44336";
-  } else if (wronGuessCount > maxGuesses / 2) {
+  } else if (wrongGuessCount > maxGuesses / 2) {
     progressColor = "#ff9800";
-  } else if (wronGuessCount > maxGuesses / 3) {
+  } else if (wrongGuessCount > maxGuesses / 3) {
     progressColor = "#b3ff00ff";
   }
 
@@ -205,10 +220,10 @@ export default function AsssemblyEndGame() {
         <div className="level-screen">
           <h1>Select Difficulty</h1>
           <div className="level-btn">
-            <button onClick={() => setGameScreen("game")}>Easy</button>
-            <button onClick={() => setGameScreen("game")}>Medium</button>
-            <button onClick={() => setGameScreen("game")}>Hard</button>
-            <button onClick={() => setGameScreen("game")}>Impossible</button>
+            <button onClick={() => selectLevel("easy")}>Easy</button>
+            <button onClick={() => selectLevel("medium")}>Medium</button>
+            <button onClick={() => selectLevel("hard")}>Hard</button>
+            <button onClick={() => selectLevel("impossible")}>Impossible</button>
           </div>
         </div>
       )}
