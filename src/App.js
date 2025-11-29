@@ -72,6 +72,25 @@ export default function AsssemblyEndGame() {
     setHintUsed(true);
   }
 
+  function goToStartScreen(){
+    setGameScreen("start")
+    setDifficulty(null)
+    setCurrentWord("")
+    setGuessedLetters([])
+    setHintUsed(false)
+    setRevealWord("")
+
+  }
+  function goToLevelScreen(){
+    setGameScreen("level")
+    setDifficulty(null)
+    setCurrentWord("")
+    setGuessedLetters([])
+    setHintUsed(false)
+    setRevealWord("")
+
+  }
+
   const levelsElements = levels.map((level, index) => {
     const islevelLost = index < wrongGuessCount;
     const styles = {
@@ -98,6 +117,20 @@ export default function AsssemblyEndGame() {
       revealLetters();
     }
   }, [isGameLost, currentWord]);
+  // Keyboard typing
+
+  useEffect(()=>{
+    function handleKeyPress(e){
+      if (isGameOver) return;
+      const key= e.key.toLowerCase()
+      if(alphabet.includes(key)){
+        addGuessedLetter(key)
+      }
+    }
+    window.addEventListener("keydown", handleKeyPress);
+    return ()=>window.removeEventListener("keydown", handleKeyPress)
+
+  },[isGameOver, alphabet])
 
   const letterElements = [...currentWord].map((letter, index) => {
     const capitalLetter = letter.toUpperCase();
@@ -225,6 +258,7 @@ export default function AsssemblyEndGame() {
             <button onClick={() => selectLevel("hard")}>Hard</button>
             <button onClick={() => selectLevel("impossible")}>Impossible</button>
           </div>
+          <button className="back-btn" onClick={goToStartScreen}>Back To </button>
         </div>
       )}
 
@@ -278,9 +312,15 @@ export default function AsssemblyEndGame() {
           )}
           <section className="keyboard">{keyboardElements}</section>
           {isGameOver && (
+            <div className="main-btn">
+            
             <button className="new-game" onClick={startNewGame}>
               New Game
             </button>
+            
+          <button className="back-btn" onClick={goToLevelScreen}>Back To </button>
+          </div>
+            
           )}
         </main>
       )}
