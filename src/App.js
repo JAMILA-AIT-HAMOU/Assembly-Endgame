@@ -5,8 +5,8 @@ import { getFarewellText, getRandomWord, getEncourageWord } from "./utils.js";
 import Confetti from "react-confetti";
 
 export default function AsssemblyEndGame() {
-  // state 
-  const [difficulty, setDifficulty]=useState(null)
+  // state
+  const [difficulty, setDifficulty] = useState(null);
   const [currentWord, setCurrentWord] = useState("");
   const [guessedLetters, setGuessedLetters] = useState([]);
   const [revealWord, setRevealWord] = useState("");
@@ -14,12 +14,12 @@ export default function AsssemblyEndGame() {
   // const [gameStarted, setGameStarted] = useState(false);
   const [gameScreen, setGameScreen] = useState("start");
 
-  // Derived values 
-  
+  // Derived values
+
   const wrongGuessCount = guessedLetters.filter(
     (letter) => !currentWord.includes(letter)
   ).length;
-  const numGuessesLeft = levels.length - 1 
+  const numGuessesLeft = levels.length - 1;
   const isGameWon = currentWord
     .split("")
     .every((letter) => guessedLetters.includes(letter));
@@ -38,23 +38,22 @@ export default function AsssemblyEndGame() {
     );
   }
   function startNewGame() {
-    const newWord=getRandomWord(difficulty)
-    setCurrentWord(newWord)
+    const newWord = getRandomWord(difficulty);
+    setCurrentWord(newWord);
     setGuessedLetters([]);
     setHintUsed(false);
     setRevealWord("");
   }
-  function selectLevel(selectedLevel){
-    setDifficulty(selectedLevel)
+  function selectLevel(selectedLevel) {
+    setDifficulty(selectedLevel);
 
-    const word =getRandomWord(selectedLevel)
-    setCurrentWord(word)
-    
+    const word = getRandomWord(selectedLevel);
+    setCurrentWord(word);
+
     setGuessedLetters([]);
     setHintUsed(false);
     setRevealWord("");
-    setGameScreen("game")
-
+    setGameScreen("game");
   }
   function useHint() {
     if (hintUsed || isGameOver) return;
@@ -72,23 +71,21 @@ export default function AsssemblyEndGame() {
     setHintUsed(true);
   }
 
-  function goToStartScreen(){
-    setGameScreen("start")
-    setDifficulty(null)
-    setCurrentWord("")
-    setGuessedLetters([])
-    setHintUsed(false)
-    setRevealWord("")
-
+  function goToStartScreen() {
+    setGameScreen("start");
+    setDifficulty(null);
+    setCurrentWord("");
+    setGuessedLetters([]);
+    setHintUsed(false);
+    setRevealWord("");
   }
-  function goToLevelScreen(){
-    setGameScreen("level")
-    setDifficulty(null)
-    setCurrentWord("")
-    setGuessedLetters([])
-    setHintUsed(false)
-    setRevealWord("")
-
+  function goToLevelScreen() {
+    setGameScreen("level");
+    setDifficulty(null);
+    setCurrentWord("");
+    setGuessedLetters([]);
+    setHintUsed(false);
+    setRevealWord("");
   }
 
   const levelsElements = levels.map((level, index) => {
@@ -119,18 +116,18 @@ export default function AsssemblyEndGame() {
   }, [isGameLost, currentWord]);
   // Keyboard typing
 
-  useEffect(()=>{
-    function handleKeyPress(e){
+  useEffect(() => {
+    function handleKeyPress(e) {
+      if (gameScreen !== "game") return;
       if (isGameOver) return;
-      const key= e.key.toLowerCase()
-      if(alphabet.includes(key)){
-        addGuessedLetter(key)
+      const key = e.key.toLowerCase();
+      if (alphabet.includes(key)) {
+        addGuessedLetter(key);
       }
     }
     window.addEventListener("keydown", handleKeyPress);
-    return ()=>window.removeEventListener("keydown", handleKeyPress)
-
-  },[isGameOver, alphabet])
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [isGameOver, alphabet]);
 
   const letterElements = [...currentWord].map((letter, index) => {
     const capitalLetter = letter.toUpperCase();
@@ -256,9 +253,13 @@ export default function AsssemblyEndGame() {
             <button onClick={() => selectLevel("easy")}>Easy</button>
             <button onClick={() => selectLevel("medium")}>Medium</button>
             <button onClick={() => selectLevel("hard")}>Hard</button>
-            <button onClick={() => selectLevel("impossible")}>Impossible</button>
+            <button onClick={() => selectLevel("impossible")}>
+              Impossible
+            </button>
           </div>
-          <button className="back-btn" onClick={goToStartScreen}>Back To </button>
+          <button className="back-btn" onClick={goToStartScreen}>
+            Back To{" "}
+          </button>
         </div>
       )}
 
@@ -313,14 +314,14 @@ export default function AsssemblyEndGame() {
           <section className="keyboard">{keyboardElements}</section>
           {isGameOver && (
             <div className="main-btn">
-            
-            <button className="new-game" onClick={startNewGame}>
-              New Game
-            </button>
-            
-          <button className="back-btn" onClick={goToLevelScreen}>Back To </button>
-          </div>
-            
+              <button className="new-game" onClick={startNewGame}>
+                New Game
+              </button>
+
+              <button className="back-btn" onClick={goToLevelScreen}>
+                Back To{" "}
+              </button>
+            </div>
           )}
         </main>
       )}
